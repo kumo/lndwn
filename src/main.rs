@@ -14,17 +14,14 @@ mod tests {
 }
 
 fn get_sticker_pack_id(url: &str) -> Option<&str> {
-    let re = Regex::new(r"line[^0-9]*([0-9]+)").expect("Regular expression is invalid");
-
-    if let Some(captures) = re.captures(url) {
-        if let Some(id) = captures.get(1) {
-            println!("ID found");
-            return Some(id.as_str());
-        }
-    }
-
-    println!("No ID found");
-    return None
+    // let id = 
+    Some(Regex::new(r"line[^0-9]*([0-9]+)")
+        .expect("Regular expression is invalid")
+        .captures(url)?
+        .get(1)?
+        .as_str())
+    
+    // Some(id)
 }
 
 fn main() {

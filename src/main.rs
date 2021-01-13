@@ -9,22 +9,22 @@ mod tests {
         let url = "https://store.line.me/stickershop/product/12969848/ja";
         let id = get_sticker_pack_id(url);
 
-        assert_eq!(id, "12969848");
+        assert_eq!(id, Some("12969848"));
     }
 }
 
-fn get_sticker_pack_id(url: &str) -> &str {
+fn get_sticker_pack_id(url: &str) -> Option<&str> {
     let re = Regex::new(r"line[^0-9]*([0-9]+)").expect("Regular expression is invalid");
 
     if let Some(captures) = re.captures(url) {
         if let Some(id) = captures.get(1) {
             println!("ID found");
-            return id.as_str();
+            return Some(id.as_str());
         }
     }
 
     println!("No ID found");
-    return ""
+    return None
 }
 
 fn main() {

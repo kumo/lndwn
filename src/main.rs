@@ -86,6 +86,10 @@ fn main() {
                 file.read_to_string(&mut file_contents).unwrap();
 
                 println!("{:?}", file_contents);
+
+                let meta = json::parse(&file_contents).unwrap();
+
+                println!("Title is {}", meta["title"]["en"]);
             } else {
                 println!("Something else happened. Status: {:?}", resp.status());
             }

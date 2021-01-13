@@ -1,3 +1,5 @@
+use regex::Regex;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -12,7 +14,17 @@ mod tests {
 }
 
 fn get_sticker_pack_id(url: &str) -> &str {
-    todo!();
+    let re = Regex::new(r"line[^0-9]*([0-9]+)").expect("Regular expression is invalid");
+
+    if let Some(captures) = re.captures(url) {
+        if let Some(id) = captures.get(1) {
+            println!("ID found");
+            return id.as_str();
+        }
+    }
+
+    println!("No ID found");
+    return ""
 }
 
 fn main() {

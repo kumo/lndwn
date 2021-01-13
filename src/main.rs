@@ -1,4 +1,6 @@
 use regex::Regex;
+use std::io::Cursor;
+use std::io::Read;
 
 #[cfg(test)]
 mod tests {
@@ -66,11 +68,24 @@ fn main() {
 
             println!("Download link: {}", link);
 
-            let resp = reqwest::blocking::get(&link).unwrap();
+            let mut resp = reqwest::blocking::get(&link).unwrap();
 
             if resp.status().is_success() {
                 println!("The request was successful!");
                 println!("Response: {:?}", resp);
+
+                let mut buf: Vec<u8> = vec!();
+                resp.copy_to(&mut buf).unwrap();
+
+                let reader = Cursor::new(buf);
+
+                let mut archive = zip::ZipArchive::new(reader).unwrap();
+
+                let mut file = archive.by_name("productInfo.meta").unwrap();
+                let mut file_contents = String::new();
+                file.read_to_string(&mut file_contents).unwrap();
+
+                println!("{:?}", file_contents);
             } else {
                 println!("Something else happened. Status: {:?}", resp.status());
             }

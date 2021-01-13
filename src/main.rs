@@ -58,6 +58,25 @@ fn main() {
 
     if let Some(link) = args.get(1) {
         println!("Link given: {}", link);
+
+        if let Some(id) = get_sticker_pack_id(link) {
+            println!("ID found: {}", id);
+
+            let link = format!("http://dl.stickershop.line.naver.jp/products/0/0/1/{}/iphone/stickers@2x.zip", id);
+
+            println!("Download link: {}", link);
+
+            let resp = reqwest::blocking::get(&link).unwrap();
+
+            if resp.status().is_success() {
+                println!("The request was successful!");
+                println!("Response: {:?}", resp);
+            } else {
+                println!("Something else happened. Status: {:?}", resp.status());
+            }
+        } else {
+            println!("No ID found");
+        }
     } else {
         println!("No link given.");
     }

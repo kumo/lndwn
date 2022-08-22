@@ -1,6 +1,7 @@
 use regex::Regex;
 use std::io::Cursor;
 use std::io::Read;
+use serde::{Deserialize, Serialize};
 
 #[cfg(test)]
 mod tests {
@@ -63,8 +64,26 @@ fn get_sticker_pack_id(url: &str) -> Option<&str> {
     return Some(link);
 }*/
 
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct StickerPack {
-    name: String,
+    package_id: usize,
+    title: StickerPackTitle,
+    stickers: Vec<StickerPackSticker>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct StickerPackTitle {
+    en: Option<String>,
+    ja: Option<String>,
+    ko: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct StickerPackSticker {
+    id: usize,
+    width: usize,
+    height: usize,
 }
 
 fn get_sticker_pack(link: &str) -> Option<StickerPack> {
@@ -96,23 +115,15 @@ fn get_sticker_pack(link: &str) -> Option<StickerPack> {
 
         println!("{:?}", file_contents);
 
-        let meta = json::parse(&file_contents).unwrap();
+        let sticker_pack: StickerPack = serde_json::from_str(&file_contents).unwrap();
 
-        println!("Title is {}", meta["title"]["en"]);
-        println!("Rest is {}", meta);
+        println!("The data is {:#?}", sticker_pack);
 
-        let stickers = match &meta["stickers"] {
-            json::JsonValue::Array(values) => values.clone(),
-            _ => vec![],
-        };
-
-        for sticker in stickers {
-            println!("Sticker is {}", sticker);
+        for sticker in &sticker_pack.stickers {
+            println!("Sticker is {:?}", sticker);
         }
 
-        Some(StickerPack {
-            name: meta["title"]["en"].to_string(),
-        })
+        Some(sticker_pack)
     } else {
         None
     }
@@ -125,5 +136,5 @@ fn main() {
 
     let sticker_pack = get_sticker_pack(link).expect("Sticker pack not found");
 
-    println!("Sticker pack is {}", sticker_pack.name);
+    println!("Sticker pack is {:?}", sticker_pack.title.en);
 }

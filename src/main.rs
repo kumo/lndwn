@@ -48,11 +48,13 @@ mod tests {
 }
 
 fn get_sticker_pack_id(url: &str) -> Option<&str> {
-    Some(Regex::new(r"line[^0-9]*([0-9]+)")
-        .expect("Regular expression is invalid")
-        .captures(url)?
-        .get(1)?
-        .as_str())
+    Some(
+        Regex::new(r"line[^0-9]*([0-9]+)")
+            .expect("Regular expression is invalid")
+            .captures(url)?
+            .get(1)?
+            .as_str(),
+    )
 }
 
 /*fn get_sticker_pack_link(id: &str) -> Option<&str> {
@@ -62,13 +64,16 @@ fn get_sticker_pack_id(url: &str) -> Option<&str> {
 }*/
 
 struct StickerPack {
-	name: String,
+    name: String,
 }
 
 fn get_sticker_pack(link: &str) -> Option<StickerPack> {
     let id = get_sticker_pack_id(link).expect("Couldn't find ID in link");
 
-    let link = format!("http://dl.stickershop.line.naver.jp/products/0/0/1/{}/iphone/stickers@2x.zip", id);
+    let link = format!(
+        "http://dl.stickershop.line.naver.jp/products/0/0/1/{}/iphone/stickers@2x.zip",
+        id
+    );
 
     println!("Download link: {}", link);
 

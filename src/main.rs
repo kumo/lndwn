@@ -83,7 +83,7 @@ fn get_sticker_pack(link: &str) -> Option<StickerPack> {
         println!("The request was successful!");
         println!("Response: {:?}", resp);
 
-        let mut buf: Vec<u8> = vec!();
+        let mut buf: Vec<u8> = vec![];
         resp.copy_to(&mut buf).unwrap();
 
         let reader = Cursor::new(buf);
@@ -101,7 +101,18 @@ fn get_sticker_pack(link: &str) -> Option<StickerPack> {
         println!("Title is {}", meta["title"]["en"]);
         println!("Rest is {}", meta);
 
-        Some(StickerPack { name: meta["title"]["en"].to_string() })
+        let stickers = match &meta["stickers"] {
+            json::JsonValue::Array(values) => values.clone(),
+            _ => vec![],
+        };
+
+        for sticker in stickers {
+            println!("Sticker is {}", sticker);
+        }
+
+        Some(StickerPack {
+            name: meta["title"]["en"].to_string(),
+        })
     } else {
         None
     }

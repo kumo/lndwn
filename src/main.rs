@@ -46,6 +46,37 @@ mod tests {
 
         assert_eq!(id, None);
     }
+
+    #[test]
+    fn test_json_reading() {
+        let json_text = r#"
+        {
+          "packageId": 12969848,
+          "title": {
+            "en": "Yokai Housemate",
+            "ja": "妖怪シェアハウス"
+          },
+          "stickers": [
+            {
+              "id": 343491126,
+              "width": 179,
+              "height": 160
+            },
+            {
+              "id": 343491127,
+              "width": 181,
+              "height": 160
+            }
+          ]
+        }
+        "#;
+        
+        let sticker_pack: StickerPack = serde_json::from_str(&json_text).unwrap();
+
+        assert_eq!(sticker_pack.title.en, Some(String::from("Yokai Housemate")));
+        assert_eq!(sticker_pack.title.ko, None);
+        assert_eq!(sticker_pack.stickers.len(), 2);
+    }
 }
 
 fn get_sticker_pack_id(url: &str) -> Option<&str> {
